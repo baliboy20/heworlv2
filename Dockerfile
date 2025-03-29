@@ -2,23 +2,23 @@
 
 
 
-# Use the official Ubuntu base image
-FROM ubuntu:latest
-
-# Install necessary packages
-RUN apt-get update && apt-get install -y \
-    nginx \
-    npm \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy the project files to the container
-COPY . /var/www/html
+# Use an official Node.js runtime as a parent image
+FROM node:14
 
 # Set the working directory
-WORKDIR /var/www/html
+WORKDIR /usr/src/app
 
-# Expose port 8080
-EXPOSE 80
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Define the command to run the app
+CMD ["node", "app.js"]
